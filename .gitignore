@@ -1,0 +1,8 @@
+# ignore common IDE files
+_build/build.config.php
+.idea
+.settings
+nbproject
+
+# ignore platform specific files
+.DS_Store
