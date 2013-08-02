@@ -72,17 +72,18 @@ if (is_array($collection)) {
     $first = empty($first) && $first !== '0' ? 1 : (integer) $first;
     $last = empty($last) ? (count($collection) + $idx - 1) : (integer) $last;
 
+    /** @var xPDOObject $object */
     foreach ($collection as $id => $object) {
         $odd = ($idx & 1);
         $properties = array_merge(
             $scriptProperties
             ,array(
                 'idx' => $idx
-            ,'first' => $first
-            ,'last' => $last
-            ,'odd' => $odd
+                ,'first' => $first
+                ,'last' => $last
+                ,'odd' => $odd
             )
-            ,$object->get($fields)
+            ,$object->toArray('', false, true, true)
         );
         $objectTpl = false;
         if ($idx == $first && !empty($tplFirst)) {
@@ -207,6 +208,29 @@ if (is_array($collection)) {
         }
         $idx++;
     }
+}
+
+/* output */
+$toSeparatePlaceholders = $modx->getOption('toSeparatePlaceholders',$scriptProperties,false);
+if (!empty($toSeparatePlaceholders)) {
+    $modx->setPlaceholders($output,$toSeparatePlaceholders);
+    if (!empty($oldTarget)) $modx->setLogTarget($oldTarget);
+    return '';
+}
+
+$output = implode($outputSeparator, $output);
+
+$tplWrapper = $modx->getOption('tplWrapper', $scriptProperties, false);
+$wrapIfEmpty = $modx->getOption('wrapIfEmpty', $scriptProperties, false);
+if (!empty($tplWrapper) && ($wrapIfEmpty || !empty($output))) {
+    $output = parseTpl($tplWrapper, array('output' => $output));
+}
+
+$toPlaceholder = $modx->getOption('toPlaceholder',$scriptProperties,false);
+if (!empty($toPlaceholder)) {
+    $modx->setPlaceholder($toPlaceholder,$output);
+    if (!empty($oldTarget)) $modx->setLogTarget($oldTarget);
+    return '';
 }
 
 if (!empty($oldTarget)) $modx->setLogTarget($oldTarget);

@@ -10,3 +10,4 @@ A set of MODX Revolution snippets for retrieving, storing, and rendering collect
 
 - getCollection: query a collection and store it in a placeholder for reuse
 - viewCollection: grab a collection from a placeholder and render each object via a chunk
+- getService: get/create an instance of a service class

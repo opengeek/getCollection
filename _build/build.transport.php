@@ -84,6 +84,25 @@ $vehicle = $builder->createVehicle(
 $builder->putVehicle($vehicle);
 unset($snippet, $properties);
 
+$snippet= $modx->newObject('modSnippet');
+$snippet->set('name', 'getService');
+$snippet->set('description', '<strong>'.PKG_VERSION.'-'.PKG_RELEASE.'</strong> Load a MODX Service class.');
+$snippet->set('category', 0);
+$snippet->set('snippet', file_get_contents($sources['source_core'] . '/snippet.getservice.php'));
+$properties = include $sources['build'].'getservice.properties.php';
+$snippet->setProperties($properties);
+/* create a transport vehicle for the data object */
+$vehicle = $builder->createVehicle(
+    $snippet,
+    array(
+        xPDOTransport::PRESERVE_KEYS => false,
+        xPDOTransport::UPDATE_OBJECT => true,
+        xPDOTransport::UNIQUE_KEY => 'name',
+    )
+);
+$builder->putVehicle($vehicle);
+unset($snippet, $properties);
+
 /* now pack in the license file, readme and setup options */
 $builder->setPackageAttributes(array(
     'license' => file_get_contents($sources['source_core'] . '/docs/license.txt'),
